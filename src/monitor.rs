@@ -42,10 +42,14 @@ pub struct Monitor {
     /// True if the monitor is visible and false otherwise.
     pub visible: bool,
 
-    /// See [`Slider`]
-    /// [`None`] if [`Mode`] is [`Mode::List`]
-    #[serde(flatten)]
-    pub slider: Option<Slider>,
+    /// The minimum value of the monitor's slider.
+    slider_min: Option<i64>,
+
+    /// The maximum value of the monitor's slider.
+    slider_max: Option<i64>,
+
+    /// True if the monitor's slider allows only integer values and false otherwise.
+    is_discrete: Option<bool>,
 }
 
 /// Monitor's Mode
@@ -101,20 +105,6 @@ pub enum NumberName {
 
     /// Show variable as name
     Name,
-}
-
-/// Monitors that do not belong to lists also have these properties
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Slider {
-    /// The minimum value of the monitor's slider.
-    slider_min: i64,
-
-    /// The maximum value of the monitor's slider.
-    slider_max: i64,
-
-    /// True if the monitor's slider allows only integer values and false otherwise.
-    is_discrete: bool,
 }
 
 // Serde impl ==================================================================

@@ -6,10 +6,11 @@ use crate::string_hashmap::StringHashMap;
 use crate::{block::Block, broadcast::Broadcast, comment::Comment, list::List, variable::Variable};
 use utils::json_to_unexpected;
 
-/// A target is the stage or a sprite.
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+/// Scratch's Stage.
+/// Costume is considered backdrop.
+#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Target {
+pub struct Stage {
     /// The name of the sprite. Always "Stage" for the stage.
     /// If not provided, the target will not be loaded.
     pub name: Text,
@@ -48,16 +49,6 @@ pub struct Target {
 
     /// The volume
     pub volume: Number,
-}
-
-/// Scratch's Stage.
-/// Costume is considered backdrop.
-#[derive(Debug, PartialEq, Clone, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Stage {
-    /// See [`Target`]
-    #[serde(flatten)]
-    pub target: Target,
 
     /// The tempo in BPM.
     pub tempo: Number,
@@ -83,9 +74,44 @@ pub struct Stage {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Sprite {
-    /// See [`Target`]
-    #[serde(flatten)]
-    pub target: Target,
+    /// The name of the sprite. Always "Stage" for the stage.
+    /// If not provided, the target will not be loaded.
+    pub name: Text,
+
+    /// An object associating IDs with arrays representing variables.
+    /// The first element of the array is the variable name,
+    /// the second is the value and the third is `true` if the variable is a cloud variable,
+    /// or otherwise not present.
+    pub variables: StringHashMap<Variable>,
+
+    /// An object associating IDs with arrays representing lists.
+    /// The first element of the array is the list name and the second is the list as an array.
+    pub lists: StringHashMap<List>,
+
+    /// An object associating IDs with broadcast names.
+    /// Normally only present in the stage.
+    pub broadcasts: StringHashMap<Broadcast>,
+
+    /// An object associating IDs with blocks.
+    pub blocks: StringHashMap<Block>,
+
+    /// An object associating IDs with comments.
+    pub comments: StringHashMap<Comment>,
+
+    /// The costume number.
+    pub current_costume: Int,
+
+    /// An array of costumes.
+    pub costumes: Vec<Costume>,
+
+    /// An array of sounds.
+    pub sounds: Vec<Sound>,
+
+    /// The layer number.
+    pub layer_order: Int,
+
+    /// The volume
+    pub volume: Number,
 
     /// True if the sprite is visible and false otherwise. Defaults to true.
     pub visible: bool,

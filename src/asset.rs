@@ -1,5 +1,7 @@
 //! Module to deal with Scratch asset
 
+use std::default;
+
 use crate::prelude::*;
 
 /// Costume Asset.
@@ -18,9 +20,19 @@ pub struct Costume {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bitmap_resolution: Option<u64>,
 
-    /// See [`Asset`]
-    #[serde(flatten)]
-    pub asset: Asset,
+    /// The MD5 hash of the asset file.
+    pub asset_id: Uid,
+
+    /// The name.
+    pub name: Name,
+
+    /// The name of the asset file.
+    /// None if using the default asset.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub md5ext: Option<String>,
+
+    /// The name of the format of the asset file.
+    pub data_format: String,
 }
 
 impl Default for Costume {
@@ -29,7 +41,10 @@ impl Default for Costume {
             rotation_center_x: Number::Int(0),
             rotation_center_y: Number::Int(0),
             bitmap_resolution: None,
-            asset: Default::default(),
+            md5ext: None,
+            asset_id: Default::default(),
+            data_format: Default::default(),
+            name: Default::default(),
         }
     }
 }
@@ -49,15 +64,6 @@ pub struct Sound {
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub format: Option<String>,
 
-    /// See [`Asset`]
-    #[serde(flatten)]
-    pub asset: Asset,
-}
-
-/// An asset is a costume or sound. (Backdrops are considered costumes.)
-#[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Asset {
     /// The MD5 hash of the asset file.
     pub asset_id: Uid,
 
